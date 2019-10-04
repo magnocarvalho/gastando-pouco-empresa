@@ -28,7 +28,7 @@ const routes: Routes = [
   { path: "reports", component: ReportsComponent, canActivate: [AuthGuard] },
   { path: 'new-promo', component: NewPromoComponent, canActivate: [AuthGuard] },
   { path: "landpage", component: LandingPageComponent, canActivate: [DashboardGuard] },
-  { path: "form-empresa", component: InfosEmpresaComponent, canActivate: [FormGuard] },
+  { path: "form-empresa", component: InfosEmpresaComponent, canActivate: [DashboardGuard] },
   { path: "", redirectTo: "/index", pathMatch: "full" },
   { path: "**", component: NotFoundPageComponent }
 ];

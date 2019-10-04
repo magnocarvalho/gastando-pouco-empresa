@@ -9,6 +9,7 @@ import { Usuario, User } from '../model/user';
 import { LoadingBarService } from '@ngx-loading-bar/core';
 import { AngularFireStorage } from '@angular/fire/storage';
 import { ToastrService } from 'ngx-toastr';
+import { Router } from '@angular/router';
 
 @Injectable({
     providedIn: 'root'
@@ -30,7 +31,7 @@ export class ApiService implements HttpInterceptor {
     };
     public empresaDados: Usuario;
 
-    constructor(private http: HttpClient, public inject: Injector, public loadingBar: LoadingBarService, private storage: AngularFireStorage, public afAuth: AngularFireAuth, private toastr: ToastrService) {
+    constructor(private http: HttpClient, public rotas: Router, public loadingBar: LoadingBarService, private storage: AngularFireStorage, public afAuth: AngularFireAuth, private toastr: ToastrService) {
         afAuth.auth.setPersistence(firebase.auth.Auth.Persistence.SESSION);
         this.user = afAuth.authState;
         this.user.subscribe(user => {
@@ -116,8 +117,25 @@ export class ApiService implements HttpInterceptor {
         });
     }
     get isLoggedIn(): boolean {
-        const user = JSON.parse(localStorage.getItem('user'));
+
+        let user = JSON.parse(localStorage.getItem('user'));
+        // console.log(user, this.userComplete.value)
+        // if (!user) {
+        //     if (this.userComplete.value) {
+        //         this.user.subscribe(async usuario => {
+        //             user.email = usuario.email
+        //             user.uid = usuario.uid
+        //             user.displayName = usuario.displayName
+        //             user.emailVerified = usuario.emailVerified
+        //             await localStorage.setItem('user', JSON.stringify(user));
+        //             return (user !== null && user.emailVerified !== false) ? true : false;
+        //         }, err => {
+        //             return false
+        //         })
+        //     }
+        // } else {
         return (user !== null && user.emailVerified !== false) ? true : false;
+        // }
     }
     get isLoggedInNotUser(): boolean {
         const user = JSON.parse(localStorage.getItem('user'));
@@ -190,13 +208,16 @@ export class ApiService implements HttpInterceptor {
                         this.doUserDados().getIdToken(true).then(idT => {
                             this.loadingBar.increment(60)
                             this.getUserLogin(idT).subscribe(usuario => {
+                                localStorage.setItem('user', JSON.stringify({ displayName: res.user.displayName, email: res.user.email, emailVerified: res.user.emailVerified }));
                                 this.loadingBar.increment(90)
                                 this.showSuccess("Login Realizado com sucesso")
+                                this.rotas.navigate(['adm']);
                                 resolve('adm');
                             }, err => {
                                 console.log(err)
                                 if (err.status == 405) {
                                     this.showSuccess("Login Realizado com sucesso, falta terminar o cadastro")
+                                    this.rotas.navigate(['form-empresa']);
                                     resolve('form-empresa');
                                 } else {
                                     this.logout()
@@ -384,6 +405,7 @@ export class ApiService implements HttpInterceptor {
         this.token = null;
         this.empresaDados = null;
         this.firebaseUser = null;
+        localStorage.setItem('user', null);
     }
     uploadFoto(base64, uid, titulo) {
         this.loadingBar.start()

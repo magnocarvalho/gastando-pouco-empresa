@@ -31,11 +31,12 @@ export class LoginComponent implements OnInit {
     this.api.doLogin(this.form.value).then(res => {
       this.ngxBar.increment(30)
       console.log(res)
-      this.rotas.navigate([res]);
+
     }).catch(err => {
       this.snack.open(err.message, 'erro', { duration: 5000 })
       console.error(err)
     }).finally(() => {
+
       this.ngxBar.complete()
     })
   }
