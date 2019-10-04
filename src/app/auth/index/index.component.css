@@ -1,0 +1,11 @@
+.header-left {
+  font-size: 40px;
+}
+#pe-footer {
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.54);
+}
+#index-altura {
+  height: calc(100vh - 65px);
+  width: 100%;
+}

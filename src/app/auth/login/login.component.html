@@ -1,0 +1,48 @@
+<div class="login">
+    <div class="centraliza">
+        <mat-card class="card-login">
+            <form [formGroup]="form">
+                <div fxLayout="column" fxLayoutAlign="center stretch">
+                    <mat-form-field class="formbase" appearance="outline">
+                        <mat-label>Email</mat-label>
+                        <input matInput placeholder="Insira seu email" type="email" required formControlName="email">
+                        <mat-error *ngIf="form.get('email').hasError('email') && !form.get('email').hasError('required')">
+                            Entre com um email valido
+                        </mat-error>
+                        <mat-error *ngIf="form.get('email').hasError('required')">
+                            Email é
+                            <strong>exigido</strong>
+                        </mat-error>
+                        <mat-icon matSuffix>email</mat-icon>
+                    </mat-form-field>
+                    <mat-form-field class="formbase" appearance="outline">
+                        <mat-label>Senha</mat-label>
+                        <input matInput type="password" placeholder="Digite sua senha" required formControlName="password">
+                        <mat-icon matSuffix>vpn_key</mat-icon>
+                        <mat-error *ngIf="form.get('password').hasError('required')">
+                            Senha é
+                            <strong>exigido</strong>
+                        </mat-error>
+                        <mat-error *ngIf="form.get('password').hasError('minlength')">
+                            Senha menor que 6 caracteres
+                        </mat-error>
+                    </mat-form-field>
+                    <div class="login-button">
+                        <button mat-raised-button color="primary" class="button-login" fxFlexAlign="center" (click)="goLogin()">
+                            <mat-icon>email</mat-icon> Login com E-mail e Senha
+                        </button>
+                    </div>
+                    <div class="login-button">
+                        <p class="ou-login text-center">ou</p>
+                    </div>
+                    <div class="login-button">
+                        <button class="button-login facebook" mat-raised-button>Login com Facebook</button>
+                    </div>
+                    <div class="login-button">
+                        <button class="button-login googleaccount" color="warn" mat-raised-button>Login com Google</button>
+                    </div>
+                </div>
+            </form>
+        </mat-card>
+    </div>
+</div>

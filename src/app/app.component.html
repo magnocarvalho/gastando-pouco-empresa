@@ -1,0 +1,42 @@
+<!--The content below is only a placeholder and can be replaced.-->
+<ngx-loading-bar></ngx-loading-bar>
+<mat-toolbar color="primary">
+  <span>Gastando Pouco</span>
+  <span class="example-spacer"></span>
+  <span *ngIf="!uid">
+    <button class="margin-r30" mat-raised-button (click)="linkRota('login')">
+      <mat-icon>account_circle</mat-icon> Login
+    </button>
+    <button mat-raised-button (click)="linkRota('register')">
+      <mat-icon>person_add</mat-icon> Register
+    </button>
+  </span>
+  <span *ngIf="uid && !emailVerified">
+    <button mat-raised-button (click)="onLoginOut()">
+      <mat-icon>close</mat-icon>Sair
+    </button>
+  </span>
+  <span *ngIf="emailVerified">
+
+    <button mat-raised-button [matMenuTriggerFor]="menu">
+      <mat-icon>account_circle</mat-icon> {{displayName}}
+    </button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item>
+        <mat-icon>account_circle</mat-icon>Perfil
+      </button>
+      <button mat-menu-item (click)="onLoginOut()">
+        <mat-icon>close</mat-icon> Logout
+      </button>
+    </mat-menu>
+
+  </span>
+</mat-toolbar>
+<div id="rotas" fxLayout="row" fxLayoutAlign="start stretch">
+  <div id="menu" *ngIf="emailVerified && userComplete | async" fxLayoutAlign="start stretch">
+    <app-menu></app-menu>
+  </div>
+  <div id="largura-total" fxLayout="column" fxLayoutAlign="start stretch" [ngClass]="{'login-total': userComplete | async}">
+    <router-outlet></router-outlet>
+  </div>
+</div>

@@ -1,0 +1,75 @@
+<div class="login">
+    <div class="centraliza">
+        <mat-card class="card-login">
+            <form [formGroup]="form">
+                <div fxLayout="column" fxLayoutAlign="center stretch">
+                    <div class="personal-image">
+                        <label class="label">
+                            <input type="file" formControlName="foto" (change)="changeListener($event)" accept=".jpg, .jpeg, .png" #fileInput />
+                            <figure class="personal-figure">
+                                <img src="{{imagemPerfil}}" class="personal-avatar" alt="avatar">
+                                <figcaption class="personal-figcaption">
+                                    <img src="/assets/camera-white.png">
+                                </figcaption>
+                            </figure>
+                        </label>
+                    </div>
+                    <mat-form-field class="formbase" appearance="outline">
+                        <mat-label>Empresa</mat-label>
+                        <input autocomplete="name" matInput placeholder="Insira o nome da empresa" type="text" required formControlName="name">
+                        <mat-error *ngIf="form.get('name').hasError('required')">
+                            Nome é
+                            <strong>obrigatorio</strong>
+                        </mat-error>
+                        <mat-icon matSuffix>person</mat-icon>
+                    </mat-form-field>
+                    <mat-form-field class="formbase" appearance="outline">
+                        <mat-label>Email</mat-label>
+                        <input autocomplete="email" matInput placeholder="Insira seu email" type="email" required formControlName="email">
+                        <mat-error *ngIf="form.get('email').hasError('email') && !form.get('email').hasError('required')">
+                            Entre com um email valido
+                        </mat-error>
+                        <mat-error *ngIf="form.get('email').hasError('required')">
+                            Email é
+                            <strong>obrigatorio</strong>
+                        </mat-error>
+                        <mat-icon matSuffix>email</mat-icon>
+                    </mat-form-field>
+                    <mat-form-field class="formbase" appearance="outline">
+                        <mat-label>Senha</mat-label>
+                        <input matInput type="password" placeholder="Digite sua senha" required formControlName="pass">
+                        <mat-icon matSuffix>vpn_key</mat-icon>
+                        <mat-error *ngIf="form.get('pass').hasError('required')">
+                            Senha é
+                            <strong>obrigatorio</strong>
+                        </mat-error>
+                        <mat-error *ngIf="form.get('pass').hasError('minlength')">
+                            Senha menor que 6 caracteres
+                        </mat-error>
+                    </mat-form-field>
+                    <ngx-invisible-recaptcha #captchaElem [siteKey]="sitekey" (reset)="handleReset()" (ready)="handleReady()" (load)="handleLoad()"
+                        (success)="handleSuccess($event)" (expire)="handleExpire()" (error)="handleError()" [useGlobalDomain]="false" [theme]="theme"
+                        [type]="type" formControlName="recaptchaFRM">
+                    </ngx-invisible-recaptcha>
+                    <div class="login-button">
+                        <button mat-raised-button color="primary" class="button-login" fxFlexAdivgn="center" (click)="registrar()">
+                            <mat-icon>person_add</mat-icon> Registrar com email
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            <div fxLayout="column" fxLayoutAlign="center stretch">
+                <div class="login-button">
+                    <p class="ou-login">ou</p>
+                </div>
+                <div class="login-button">
+                    <button class="button-login facebook" color="basic" mat-raised-button (click)="loginFacebook()">Login com Facebook</button>
+                </div>
+                <div class="login-button">
+                    <button class="button-login googleaccount" color="warn" mat-raised-button>Login com Google</button>
+                </div>
+            </div>
+        </mat-card>
+    </div>
+</div>

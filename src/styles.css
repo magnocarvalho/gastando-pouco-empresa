@@ -1,0 +1,121 @@
+/* You can add global styles to this file, and also import other style files */
+
+@import "~@angular/material/prebuilt-themes/deeppurple-amber.css";
+@import "~ngx-toastr/toastr";
+body,
+html {
+  min-height: 100%;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+body {
+  line-height: 1;
+  /* background-size: auto; */
+  margin: 0;
+  padding: 0;
+  border: 0;
+  vertical-align: baseline;
+  /* background: rgb(250, 250, 250);
+  background: -moz-linear-gradient(
+    180deg,
+    rgba(250, 250, 250, 1) 0%,
+    rgba(163, 45, 253, 0.3617822128851541) 100%
+  );
+  background: -webkit-linear-gradient(
+    180deg,
+    rgba(250, 250, 250, 1) 0%,
+    rgba(163, 45, 253, 0.3617822128851541) 100%
+  );
+  background: linear-gradient(
+    180deg,
+    rgba(250, 250, 250, 1) 0%,
+    rgba(163, 45, 253, 0.3617822128851541) 100%
+  );
+  filter: progid: DXImageTransform.Microsoft.gradient(startColorstr="#fafafa", endColorstr="#a32dfd", GradientType=1); */
+}
+
+.login {
+  height: 100%;
+  max-height: max-content;
+  overflow: auto;
+}
+
+.formbase {
+  width: 100%;
+}
+
+.centraliza {
+  display: flex;
+  align-self: center;
+  align-items: center;
+}
+
+.text-center {
+  text-align: center;
+  align-self: center;
+}
+
+.card-login {
+  width: 100%;
+  margin: 0 auto;
+  max-width: 500px;
+  align-self: center;
+}
+
+.centraliza {
+  padding-top: 60px;
+}
+
+.login-button {
+  display: flex;
+  align-self: center;
+  align-items: center;
+  padding-top: 20px;
+}
+
+.ou-login {
+  padding-top: 10px;
+  align-self: center;
+  margin: 0 auto;
+}
+
+.button-login {
+  font-weight: 500;
+  height: auto;
+  line-height: normal;
+  max-width: 220px;
+  min-height: 40px;
+  padding: 8px 16px;
+  text-align: center;
+  width: 100%;
+}
+
+.login-button .button-login {
+  align-self: center;
+  margin: 0 auto;
+}
+
+.facebook {
+  background-color: #3b5998;
+  color: #ffffff;
+}
+
+.googleaccount {
+  background-color: palevioletred;
+}
+
+.marg-10 {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+agm-map {
+  height: 300px;
+}
+mat-toolbar {
+  position: fixed;
+  top: 0;
+  z-index: 999;
+}
+.mat-card {
+  margin-bottom: 20px;
+}
