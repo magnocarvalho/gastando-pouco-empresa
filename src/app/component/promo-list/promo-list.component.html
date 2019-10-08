@@ -1,0 +1,25 @@
+<div fxLayout="row">
+    <mat-card class="wit-400">
+        <mat-card-header>
+            <mat-card-title>{{objteste.title}}</mat-card-title>
+            <mat-card-subtitle>De {{objteste.initPrice | currency: 'BRL'}} por {{objteste.endPrice | currency : 'BRL'}}</mat-card-subtitle>
+
+            <span class="example-spacer"></span>
+            <mat-chip-list>
+                <mat-chip>-{{objteste.descont | percent: '2.2-2'}}<mat-icon>local_offer</mat-icon>
+                </mat-chip>
+            </mat-chip-list>
+
+        </mat-card-header>
+        <img matCardImage src="/assets/mean.png">
+        <mat-card-content>
+            <mat-card-subtitle>{{objteste.about}}</mat-card-subtitle>
+            <mat-card-subtitle>Validade do dia {{dataString(objteste.initDate)}} até o dia {{dataString(objteste.endDate)}}</mat-card-subtitle>
+        </mat-card-content>
+        <mat-card-actions align="center">
+            <button mat-raised-button (click)="editPromo(objteste)" color="primary">Editar</button>
+            <button mat-raised-button (click)="relatorio(objteste)" color="link">Relatorio</button>
+            <button mat-raised-button (click)="deletar(objteste)" color="warn">Deletar</button>
+        </mat-card-actions>
+    </mat-card>
+</div>

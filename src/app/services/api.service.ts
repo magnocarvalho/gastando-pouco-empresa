@@ -10,6 +10,7 @@ import { LoadingBarService } from '@ngx-loading-bar/core';
 import { AngularFireStorage } from '@angular/fire/storage';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
+import { Promo } from '../model/promo';
 
 @Injectable({
     providedIn: 'root'
@@ -119,23 +120,9 @@ export class ApiService implements HttpInterceptor {
     get isLoggedIn(): boolean {
 
         let user = JSON.parse(localStorage.getItem('user'));
-        // console.log(user, this.userComplete.value)
-        // if (!user) {
-        //     if (this.userComplete.value) {
-        //         this.user.subscribe(async usuario => {
-        //             user.email = usuario.email
-        //             user.uid = usuario.uid
-        //             user.displayName = usuario.displayName
-        //             user.emailVerified = usuario.emailVerified
-        //             await localStorage.setItem('user', JSON.stringify(user));
-        //             return (user !== null && user.emailVerified !== false) ? true : false;
-        //         }, err => {
-        //             return false
-        //         })
-        //     }
-        // } else {
+
         return (user !== null && user.emailVerified !== false) ? true : false;
-        // }
+
     }
     get isLoggedInNotUser(): boolean {
         const user = JSON.parse(localStorage.getItem('user'));
@@ -226,7 +213,6 @@ export class ApiService implements HttpInterceptor {
                                 }
                             })
                         })
-
                     },
                     err => reject(err)
                 );
@@ -313,6 +299,7 @@ export class ApiService implements HttpInterceptor {
     }
     post(rota, obj): Observable<any> {
         this.loadingBar.start()
+        obj['createdby'] = this.empresaDados._id
         return this.http.post<any>(this.baseurl + rota, obj, {
             headers: {
                 'Content-Type': 'application/json',
@@ -459,6 +446,21 @@ export class ApiService implements HttpInterceptor {
                 );
             });
         });
+    }
+
+    promoPost(obj: Promo): Observable<Promo> {
+        let promo = this.post('promo', obj)
+        this.loadingBar.complete()
+        return promo
+    }
+
+    promoGetUser(): Observable<any> {
+
+        this.getUser(this.token).subscribe(res => {
+            let promos = this.get('promo', res._id)
+            return promos;
+        })
+
     }
 
 

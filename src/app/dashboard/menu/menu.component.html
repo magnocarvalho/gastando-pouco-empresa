@@ -7,13 +7,13 @@
     <mat-card-content>
         <mat-nav-list>
             <mat-list-item [routerLink]="[ '/new-promo' ]">
-                <mat-icon>account_box</mat-icon> Perfil
+                <mat-icon>add_shopping_cart</mat-icon> Nova Promoção
             </mat-list-item>
-            <mat-list-item>
+            <mat-list-item [routerLink]="['/promo-list']">
                 <mat-icon>shopping_cart</mat-icon> Promoções
             </mat-list-item>
             <mat-list-item>
-                <mat-icon>add_shopping_cart</mat-icon> Nova Promoção
+                <mat-icon>account_box</mat-icon> Perfil
             </mat-list-item>
             <mat-list-item [routerLink]="[ '/reports' ]">
                 <mat-icon>business</mat-icon> Relatorios

@@ -8,6 +8,7 @@ export interface User {
 }
 
 export class Usuario implements User {
+    _id: string;
     id: string;
     uid: string;
     email: string;

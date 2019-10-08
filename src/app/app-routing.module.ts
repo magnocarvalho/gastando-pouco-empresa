@@ -12,6 +12,7 @@ import { FormGuard } from './guard/form.guard';
 import { IndexComponent } from './auth/index/index.component';
 import { NewPromoComponent } from './component/new-promo/new-promo.component';
 import { ReportsComponent } from './component/reports/reports.component';
+import { PromoListComponent } from './component/promo-list/promo-list.component';
 
 const routes: Routes = [
   {
@@ -26,6 +27,7 @@ const routes: Routes = [
     path: "adm", component: DashboardComponent, canActivate: [AuthGuard]
   },
   { path: "reports", component: ReportsComponent, canActivate: [AuthGuard] },
+  { path: "promo-list", component: PromoListComponent, canActivate: [AuthGuard] },
   { path: 'new-promo', component: NewPromoComponent, canActivate: [AuthGuard] },
   { path: "landpage", component: LandingPageComponent, canActivate: [DashboardGuard] },
   { path: "form-empresa", component: InfosEmpresaComponent, canActivate: [DashboardGuard] },

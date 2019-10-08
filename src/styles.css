@@ -119,3 +119,6 @@ mat-toolbar {
 .mat-card {
   margin-bottom: 20px;
 }
+.example-spacer {
+  flex: 1 1 auto;
+}
