@@ -78,6 +78,7 @@ import { ReportsComponent } from './component/reports/reports.component';
 import { ApiService } from './services/api.service';
 import { MenuComponent } from './dashboard/menu/menu.component';
 import { PromoListComponent } from './component/promo-list/promo-list.component';
+import { EditProfileComponent } from './component/edit-profile/edit-profile.component';
 
 @NgModule({
   declarations: [
@@ -94,7 +95,8 @@ import { PromoListComponent } from './component/promo-list/promo-list.component'
     NewPromoComponent,
     ReportsComponent,
     MenuComponent,
-    PromoListComponent
+    PromoListComponent,
+    EditProfileComponent
   ],
   imports: [
     AngularFireModule.initializeApp(environment.firebase),
