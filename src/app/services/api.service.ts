@@ -31,13 +31,12 @@ export class ApiService implements HttpInterceptor {
         emailVerified: undefined
     };
     public empresaDados: Usuario;
+    public promos: Promo[] = []
 
     constructor(private http: HttpClient, public rotas: Router, public loadingBar: LoadingBarService, private storage: AngularFireStorage, public afAuth: AngularFireAuth, private toastr: ToastrService) {
         afAuth.auth.setPersistence(firebase.auth.Auth.Persistence.SESSION);
         this.user = afAuth.authState;
         this.user.subscribe(user => {
-            /* Saving user data in localstorage when 
-            logged in and setting up null when logged out */
             try {
                 if (user) {
                     this.firebaseUser = {
@@ -47,22 +46,11 @@ export class ApiService implements HttpInterceptor {
                         photoURL: user.photoURL,
                         emailVerified: user.emailVerified
                     };
-                    user.getIdToken(true).then(idToken => {
-                        this.token = idToken;
-                        if (this.token) {
-                            if (this.userComplete.value != true) {
-                                this.getUser(this.token).subscribe(empresa => {
-                                    console.log('endereço da empresa', empresa.googlePlace)
-                                    this.userComplete.next(true)
-                                    console.log("Email logado : ", this.firebaseUser.email);
-                                    localStorage.setItem('user', JSON.stringify(this.firebaseUser));
-                                })
-                            }
-                        }
-                        this.loadingBar.complete()
-                    }).catch(erro => {
-                        this.loadingBar.complete()
-                    })
+                    localStorage.setItem('user', JSON.stringify(this.firebaseUser));
+
+
+                    this.loadingBar.complete()
+                    this.getEmpresa()
 
                 } else {
                     localStorage.setItem('user', null);
@@ -73,7 +61,89 @@ export class ApiService implements HttpInterceptor {
                 this.afAuth.auth.signOut();
             }
         });
+        // this.getData('user').toPromise()
 
+    }
+    getEmpresa() {
+        return this.getData('user').subscribe(res => {
+            if (res != undefined) {
+                this.empresaDados = Object.assign({}, res)
+                localStorage.setItem('empresaDados', JSON.stringify(res));
+                console.log('Dados dos usuario 353', this.empresaDados.cidade)
+
+                localStorage.setItem('user', JSON.stringify(this.firebaseUser));
+                this.userComplete.next(true)
+                this.getPromocoes(this.empresaDados._id)
+            } else {
+                console.log("Erro ao buscar o usuario", res)
+                this.userComplete.next(true)
+            }
+        })
+    }
+    getPromocoes(id = this.empresaDados._id || null) {
+        return this.getData('promo', id).subscribe(res => {
+            this.promos = res;
+        });
+    }
+
+    getData(rota, param?): Observable<any> {
+        return new Observable(observer => {
+            let url = this.baseurl
+            let params = {}
+            if (param) {
+                url = url + rota
+                params = { empresa: param }
+            } else {
+                url = url + rota
+            }
+            console.log({ url, rota, param })
+            this.getTokenHeader()
+                .then(tokenOptions => {
+                    return this.http.get(`${url}`, { headers: tokenOptions, params })
+                        .subscribe(res => {
+                            // console.log(res);
+
+                            observer.next(res);
+                            observer.complete();
+                        })
+                })
+                .catch((error: any) => {
+                    observer.error(error);
+                    observer.complete();
+                });
+        });
+    }
+    postData(rota, obj): Observable<any> {
+        this.loadingBar.start()
+        if (rota != 'user')
+            obj['createdby'] = this.empresaDados._id
+        return new Observable(observer => {
+            this.getTokenHeader()
+                .then(tokenOptions => {
+                    return this.http.post(this.baseurl + rota, obj, { headers: tokenOptions })
+                        .subscribe(res => {
+                            observer.next(res);
+                            observer.complete();
+                            this.loadingBar.complete()
+                        })
+                })
+                .catch((error: any) => {
+                    observer.error(error);
+                    observer.complete();
+                    this.loadingBar.complete()
+                });
+        });
+    }
+    getTokenHeader() {
+        return firebase.auth().currentUser.getIdToken()
+            .then(token => {
+                // console.log(token);
+                let tokenHeader = {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                };
+                return tokenHeader;
+            });
     }
 
     removeRequest(req: HttpRequest<any>) {
@@ -83,6 +153,7 @@ export class ApiService implements HttpInterceptor {
         }
         this.isLoading.next(this.requests.length > 0);
     }
+
     showSuccess(mensagem) {
         this.toastr.success(mensagem, 'Sucesso');
     }
@@ -108,21 +179,20 @@ export class ApiService implements HttpInterceptor {
                     },
                     () => {
                         this.removeRequest(req);
+                        this.loadingBar.complete()
                         observer.complete();
                     });
             // remove request from queue when cancelled
             return () => {
                 this.removeRequest(req);
+                this.loadingBar.complete()
                 subscription.unsubscribe();
             };
         });
     }
     get isLoggedIn(): boolean {
-
         let user = JSON.parse(localStorage.getItem('user'));
-
         return (user !== null && user.emailVerified !== false) ? true : false;
-
     }
     get isLoggedInNotUser(): boolean {
         const user = JSON.parse(localStorage.getItem('user'));
@@ -194,10 +264,12 @@ export class ApiService implements HttpInterceptor {
                     res => {
                         this.doUserDados().getIdToken(true).then(idT => {
                             this.loadingBar.increment(60)
-                            this.getUserLogin(idT).subscribe(usuario => {
+                            this.getData('user').subscribe((empresa: Usuario) => {
                                 localStorage.setItem('user', JSON.stringify({ displayName: res.user.displayName, email: res.user.email, emailVerified: res.user.emailVerified }));
                                 this.loadingBar.increment(90)
+                                console.log('empresa 202', empresa.pais)
                                 this.showSuccess("Login Realizado com sucesso")
+                                this.empresaDados = empresa
                                 this.rotas.navigate(['adm']);
                                 resolve('adm');
                             }, err => {
@@ -259,117 +331,29 @@ export class ApiService implements HttpInterceptor {
         return this.empresaDados;
     }
 
-    getToken() {
-        this.user.subscribe(user => {
-            if (user) {
-                // //("Cliente", user.displayName, user.emailVerified)
-                if (user.emailVerified) {
-                    // //('usuario verificado')
-                    user.getIdToken(true).then(idToken => {
-                        this.token = idToken;
-                        if (this.token) {
-                            if (this.userComplete.value != true) {
-                                this.getUser(this.token).subscribe(empresa => {
-                                    //  console.log('endereço da empresa', empresa.googlePlace)
-                                    this.userComplete.next(true)
-                                })
-                            }
-                        }
-                        // this.userComplete.next(true)
-                        this.loadingBar.complete()
-                    }).catch(erro => {
-                        // this.logout()
-                        this.loadingBar.complete()
-
-                        // //('error getToken', erro)
-
-                    })
-                } else {
-                    this.loadingBar.complete()
-
-                    // //('usuario nao verificado')
-                }
-            } else {
-                this.loadingBar.complete()
-
-                // //('usuario', user)
-                // this.logout()
-            }
-        });
-    }
-    post(rota, obj): Observable<any> {
-        this.loadingBar.start()
-        obj['createdby'] = this.empresaDados._id
-        return this.http.post<any>(this.baseurl + rota, obj, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${this.token}`
-            }
-        })
-    }
-    get(rota, param?): Observable<any> {
-        this.loadingBar.start()
-        let url = `${this.baseurl}${rota}/`
-        if (param != undefined)
-            url + param
-        return this.http.get<any>(url, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${this.token}`
-            }
-        })
-    }
-
     createUser(obj): Observable<any> {
-        return this.post('user', obj)
-    }
-    getUserLogin(token): Observable<any> {
-        return this.getUser(token);
-    }
-
-    getUser(token): Observable<any> {
-        this.token = token;
-        let retorno: Observable<any>;
-        retorno = this.http.get<any>(this.baseurl + 'user', {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${this.token}`
-            }
-        })
-        retorno.subscribe(res => {
-
-            // this.userDados = Object.assign({}, res, this.userFire)
+        this.postData('user', obj).subscribe(res => {
             if (res != undefined) {
                 this.empresaDados = Object.assign({}, res)
-                localStorage.setItem('empresaDados', JSON.stringify(this.empresaDados));
-                // console.log('Dados dos usuario', res)
+                localStorage.setItem('empresaDados', JSON.stringify(res));
+                console.log('Dados dos usuario 353', this.empresaDados.cidade)
+
+                localStorage.setItem('user', JSON.stringify(this.firebaseUser));
                 this.userComplete.next(true)
+                this.getPromocoes(this.empresaDados._id)
             } else {
-                this.userComplete.next(false)
                 console.log("Erro ao buscar o usuario", res)
+                this.userComplete.next(true)
             }
-
-        }, err => {
-            // //(err.status)
-            if (err.status == '401') {
-                // //('erro ao buscar o usario 401: nao autorizado falta token', err.message)
-
-            }
-            if (err.status == 405) {
-                // //('erro ao buscar o usario 405: usuario nao encontrado', err.message)
-            } else {
-                // this.logout()
-                // //('erro ao buscar o usario :', err.message)
-            }
-
         })
-
-
-        return retorno
-
+        return
     }
+    getUserLogin(token): Observable<any> {
+        return this.getData('user');
+    }
+
     getTipos(): Observable<any> {
-        return this.get('tipos')
+        return this.getData('tipos')
     }
 
     errorHandl(error) {
@@ -449,18 +433,7 @@ export class ApiService implements HttpInterceptor {
     }
 
     promoPost(obj: Promo): Observable<Promo> {
-        let promo = this.post('promo', obj)
-        this.loadingBar.complete()
-        return promo
-    }
-
-    promoGetUser(): Observable<any> {
-
-        this.getUser(this.token).subscribe(res => {
-            let promos = this.get('promo', res._id)
-            return promos;
-        })
-
+        return this.postData('promo', obj)
     }
 
 

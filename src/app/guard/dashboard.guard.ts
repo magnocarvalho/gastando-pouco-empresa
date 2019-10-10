@@ -15,7 +15,7 @@ export class DashboardGuard implements CanActivate {
   canActivate(
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
-    if (this.authService.isLoggedIn) {
+    if (this.authService.isLoggedIn && this.authService.userComplete) {
       console.log("You are not allowed to access this URL!");
       this.router.navigate(['adm'])
     }

@@ -12,7 +12,7 @@
                 <span *ngIf="!emailVerified">
                     <h5 *ngIf="email">Para continuar o cadastro verifique seu usuario no email e recarregue a pagina</h5>
                 </span>
-                <span *ngIf="emailVerified">
+                <span *ngIf="emailVerified && !api.userComplete">
                     <form [formGroup]="form">
                         <div fxLayout="column" fxLayoutAlign="start stretch">
                             <div class="larg-100">
@@ -94,22 +94,31 @@
             </mat-card-content>
             <mat-divider>
             </mat-divider>
-            <mat-card-actions>
-                <div class="larg-100" *ngIf="!emailVerified" fxLayout="row" fxLayoutAlign="center center">
-                    <span class="span-1">
-                        <a mat-raised-button color="primary" href="/form-empresa">Recarregar a pagina</a>
-                    </span>
-                    <span class="span-1" class="marg-10">
-                        <p>ou</p>
-                    </span>
-                    <span class="span-1">
-                        <button mat-raised-button (click)="reEnviarEmail()" color="warn">Reenviar Email</button>
-                    </span>
-                </div>
-                <div class="larg-100" *ngIf="emailVerified" fxLayout="row" fxLayoutAlign="center center">
-                    <button mat-raised-button color="primary" (click)="salvarDados()">Salvar</button>
-                </div>
-            </mat-card-actions>
+            <span *ngIf="!emailVerified || !api.userComplete">
+                <mat-card-actions>
+                    <div class="larg-100" *ngIf="!emailVerified" fxLayout="row" fxLayoutAlign="center center">
+                        <span class="span-1">
+                            <a mat-raised-button color="primary" href="/form-empresa">Recarregar a pagina</a>
+                        </span>
+                        <span class="span-1" class="marg-10">
+                            <p>ou</p>
+                        </span>
+                        <span class="span-1">
+                            <button mat-raised-button (click)="reEnviarEmail()" color="warn">Reenviar Email</button>
+                        </span>
+                    </div>
+                    <div class="larg-100" *ngIf="emailVerified" fxLayout="row" fxLayoutAlign="center center">
+                        <button mat-raised-button color="primary" (click)="salvarDados()">Salvar</button>
+                    </div>
+                </mat-card-actions>
+            </span>
+            <span *ngIf="api.userComplete && emailVerified">
+                <mat-card-actions>
+                    <div class="larg-100" fxLayout="row" fxLayoutAlign="center center">
+                        <a mat-raised-button href="adm">Painel</a>
+                    </div>
+                </mat-card-actions>
+            </span>
         </mat-card>
     </div>
 </div>

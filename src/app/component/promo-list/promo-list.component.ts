@@ -10,7 +10,7 @@ import { ApiService } from 'src/app/services/api.service';
 })
 export class PromoListComponent implements OnInit {
 
-  constructor(public api: ApiService) { }
+
   promocoes: any;
   objteste: Promo = {
 
@@ -26,11 +26,12 @@ export class PromoListComponent implements OnInit {
 
   }
 
+  listPromo: Promo[] = []
+  constructor(public api: ApiService) {
+    this.listPromo = api.promos
+  }
   ngOnInit() {
-    this.api.promoGetUser().subscribe(res => {
-      console.log(res)
-      this.promocoes = res
-    })
+    this.api.getPromocoes()
   }
 
   dataString(data): String {
