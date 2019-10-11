@@ -134,10 +134,18 @@ export class ApiService implements HttpInterceptor {
                 });
         });
     }
-    getTokenHeader() {
-        return firebase.auth().currentUser.getIdToken()
+    async getTokenHeader() {
+        if (this.token) {
+            let tokenHeader = {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${this.token}`
+            };
+            return tokenHeader;
+        }
+        return await firebase.auth().currentUser.getIdToken()
             .then(token => {
                 // console.log(token);
+                this.token = token
                 let tokenHeader = {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`

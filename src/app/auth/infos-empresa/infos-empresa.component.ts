@@ -1,11 +1,8 @@
-import { Component, OnInit, ViewEncapsulation } from "@angular/core";
-import { User } from "src/app/model/user";
+import { Component, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
-import { MapsAPILoader, GoogleMapsAPIWrapper } from '@agm/core';
-import { Observable, from, of } from "rxjs";
+import { MapsAPILoader } from '@agm/core';
 import { Location, Appearance } from '@angular-material-extensions/google-maps-autocomplete';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { tap, map, } from 'rxjs/operators';
 import { LocationService } from 'src/app/services/location.service';
 import { MatSnackBar } from '@angular/material';
 import { ApiService } from 'src/app/services/api.service';
@@ -22,7 +19,6 @@ export class InfosEmpresaComponent implements OnInit {
   emailVerified: boolean = false;
   photoURL: any = null;
   uid: any = null;
-  private geocoder: any;
   //variaveis maps
   public appearance = Appearance;
   public zoom: number;
@@ -32,7 +28,7 @@ export class InfosEmpresaComponent implements OnInit {
   public tiposCarregados = [];
   form: FormGroup;
   mascaraCnpj = "00.000.000/0000-00"
-  constructor(private rota: Router, public api: ApiService, public snackBar: MatSnackBar, private formBuilder: FormBuilder, private mapLoader: MapsAPILoader, private reverso: LocationService) {
+  constructor(private rota: Router, public api: ApiService, public snackBar: MatSnackBar, private formBuilder: FormBuilder, private reverso: LocationService) {
 
     this.api.user.subscribe(user => {
       if (user) {
@@ -59,7 +55,6 @@ export class InfosEmpresaComponent implements OnInit {
       tipo: ["", [Validators.required]],
       googlePlace: ["", [Validators.required]]
     });
-    this.geocoder = new google.maps.Geocoder();
   }
 
 
@@ -70,7 +65,7 @@ export class InfosEmpresaComponent implements OnInit {
   }
 
   reEnviarEmail() {
-    this.api.doCheckEmail().then(res => {
+    this.api.doCheckEmail().then(() => {
       alert('Email reenviado para ' + this.email)
     })
   }
