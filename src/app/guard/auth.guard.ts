@@ -19,7 +19,14 @@ export class AuthGuard implements CanActivate {
     if (this.authService.isLoggedIn !== true) {
       console.log('Não logado')
       this.router.navigate(['index'])
+      return false
     }
+    // else
+    //   if (!this.authService.empresaDados) {
+    //     // alert('Termine Seu cadastro!')
+    //     this.router.navigate(['form-empresa'])
+    //     return false
+    //   }
     return true;
   }
 

@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { ApiService } from 'src/app/services/api.service';
+import { Promo } from 'src/app/model/promo';
 
 @Component({
   selector: 'app-index',
@@ -7,7 +9,12 @@ import { Component, OnInit } from '@angular/core';
 })
 export class IndexComponent implements OnInit {
 
-  constructor() { }
+  public promos: Promo[] = []
+  constructor(public api: ApiService) {
+    api.getAllPromos().subscribe(res => {
+      this.promos = res
+    })
+  }
 
   ngOnInit() {
   }

@@ -18,12 +18,12 @@ import { EditProfileComponent } from './component/edit-profile/edit-profile.comp
 const routes: Routes = [
   {
     path: "login",
-    component: LoginComponent, canActivate: [DashboardGuard]
+    component: LoginComponent
   },
   {
-    path: 'index', component: IndexComponent, canActivate: [DashboardGuard]
+    path: 'index', component: IndexComponent
   },
-  { path: "register", component: CreateLoginComponent, canActivate: [DashboardGuard] },
+  { path: "register", component: CreateLoginComponent },
   {
     path: "adm", component: DashboardComponent, canActivate: [AuthGuard]
   },
@@ -31,8 +31,8 @@ const routes: Routes = [
   { path: "promo-list", component: PromoListComponent, canActivate: [AuthGuard] },
   { path: "edit-profile", component: EditProfileComponent, canActivate: [AuthGuard] },
   { path: 'new-promo', component: NewPromoComponent, canActivate: [AuthGuard] },
-  { path: "landpage", component: LandingPageComponent, canActivate: [DashboardGuard] },
-  { path: "form-empresa", component: InfosEmpresaComponent, canActivate: [DashboardGuard] },
+  { path: "landpage", component: LandingPageComponent },
+  { path: "form-empresa", component: InfosEmpresaComponent },
   { path: "", redirectTo: "/index", pathMatch: "full" },
   { path: "**", component: NotFoundPageComponent }
 ];

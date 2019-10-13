@@ -55,7 +55,7 @@ export class ApiService implements HttpInterceptor {
                 } else {
                     localStorage.setItem('user', null);
                     // JSON.parse(localStorage.getItem('user'));
-                    console.log("Nenhum usuario logado");
+                    // console.log("Nenhum usuario logado");
                 }
             } catch (error) {
                 this.afAuth.auth.signOut();
@@ -66,18 +66,20 @@ export class ApiService implements HttpInterceptor {
     }
     getEmpresa() {
         return this.getData('user').subscribe(res => {
-            if (res != undefined) {
+            if (res != undefined && !res.error) {
                 this.empresaDados = Object.assign({}, res)
                 localStorage.setItem('empresaDados', JSON.stringify(res));
-                console.log('Dados dos usuario 353', this.empresaDados.cidade)
+                console.log('Dados dos usuario 73', this.empresaDados)
 
                 localStorage.setItem('user', JSON.stringify(this.firebaseUser));
                 this.userComplete.next(true)
                 this.getPromocoes(this.empresaDados._id)
             } else {
-                console.log("Erro ao buscar o usuario", res)
-                this.userComplete.next(true)
+                console.log("78 Erro ao buscar o usuario", res)
+                this.userComplete.next(false)
             }
+        }, err => {
+            this.userComplete.next(false)
         })
     }
     getPromocoes(id = this.empresaDados._id || null) {
@@ -96,7 +98,7 @@ export class ApiService implements HttpInterceptor {
             } else {
                 url = url + rota
             }
-            console.log({ url, rota, param })
+            // console.log({ url, rota, param })
             this.getTokenHeader()
                 .then(tokenOptions => {
                     return this.http.get(`${url}`, { headers: tokenOptions, params })
@@ -219,7 +221,7 @@ export class ApiService implements HttpInterceptor {
                     resolve(res);
                 },
                 err => {
-                    console.log(err);
+                    // console.log(err);
                     reject(err);
                 }
             );
@@ -233,10 +235,10 @@ export class ApiService implements HttpInterceptor {
                 .then(res => {
                     this.doCheckEmail()
                         .then(email => {
-                            console.log("email", email);
+                            // console.log("email", email);
                             this.uploadPerfilImagem(arquivoImg, res.user.uid)
                                 .then(img => {
-                                    // console.log(img);
+                                    console.log(img);
                                     this.doUpdateUser(value.name, img.caminhoImagem)
                                         .then(useUpdate => {
                                             resolve(this.afAuth.auth.currentUser);
@@ -271,26 +273,31 @@ export class ApiService implements HttpInterceptor {
                 .then(
                     res => {
                         this.doUserDados().getIdToken(true).then(idT => {
+
+                            this.token = idT
                             this.loadingBar.increment(60)
                             this.getData('user').subscribe((empresa: Usuario) => {
-                                localStorage.setItem('user', JSON.stringify({ displayName: res.user.displayName, email: res.user.email, emailVerified: res.user.emailVerified }));
-                                this.loadingBar.increment(90)
-                                console.log('empresa 202', empresa.pais)
-                                this.showSuccess("Login Realizado com sucesso")
-                                this.empresaDados = empresa
-                                this.rotas.navigate(['adm']);
-                                resolve('adm');
-                            }, err => {
-                                console.log(err)
-                                if (err.status == 405) {
+                                console.log('empresa 202', empresa)
+
+                                if (empresa['error'] == 405) {
                                     this.showSuccess("Login Realizado com sucesso, falta terminar o cadastro")
                                     this.rotas.navigate(['form-empresa']);
                                     resolve('form-empresa');
                                 } else {
-                                    this.logout()
-                                    reject(err)
-
+                                    localStorage.setItem('user', JSON.stringify({ displayName: res.user.displayName, email: res.user.email, emailVerified: res.user.emailVerified }));
+                                    this.loadingBar.increment(90)
+                                    this.showSuccess("Login Realizado com sucesso")
+                                    this.empresaDados = empresa
+                                    this.rotas.navigate(['adm']);
+                                    resolve('adm');
                                 }
+                            }, err => {
+
+
+
+                                this.logout()
+                                reject(err)
+
                             })
                         })
                     },
@@ -340,18 +347,21 @@ export class ApiService implements HttpInterceptor {
     }
 
     createUser(obj): Observable<any> {
+        obj.displayName = this.firebaseUser.displayName;
+        obj.uid = this.firebaseUser.uid
+        obj.email = this.firebaseUser.email
+        obj.photoURL = this.firebaseUser.photoURL
         this.postData('user', obj).subscribe(res => {
             if (res != undefined) {
                 this.empresaDados = Object.assign({}, res)
                 localStorage.setItem('empresaDados', JSON.stringify(res));
-                console.log('Dados dos usuario 353', this.empresaDados.cidade)
-
+                // console.log('Dados dos usuario 353', this.empresaDados.cidade)
                 localStorage.setItem('user', JSON.stringify(this.firebaseUser));
                 this.userComplete.next(true)
                 this.getPromocoes(this.empresaDados._id)
             } else {
-                console.log("Erro ao buscar o usuario", res)
-                this.userComplete.next(true)
+                // console.log("Erro ao buscar o usuario", res)
+                this.userComplete.next(false)
             }
         })
         return
@@ -379,7 +389,7 @@ export class ApiService implements HttpInterceptor {
     logout() {
         localStorage.setItem('userDados', null);
         this.doLogout().finally(() => {
-            console.log('Logout');
+            // console.log('Logout');
         })
         this.token = null;
         this.empresaDados = null;
@@ -395,18 +405,18 @@ export class ApiService implements HttpInterceptor {
             taksUpload.task.on(firebase.storage.TaskEvent.STATE_CHANGED, (snapshot) => {
                 this.loadingBar.set((snapshot.bytesTransferred / snapshot.totalBytes) * 100)
                 if (snapshot.state == "sucess") {
-                    // console.log('Uploaded a data_url string!', snapshot.downloadURL);
+                    console.log('Uploaded a data_url string!', snapshot.downloadURL);
                     this.loadingBar.complete()
                     // this.loadingBar.
                 }
             }, erro => {
-                // console.log('Falhou o upload')
+                console.log('Falhou o upload')
                 alert('Falha ao fazer o upload da sua imagem, tente novamente mais tarde')
                 this.loadingBar.complete()
                 reject(erro)
             }, () => {
                 taksUpload.task.snapshot.ref.getDownloadURL().then(function (downloadURL) {
-                    // console.log('File available at', downloadURL);
+                    console.log('File available at', downloadURL);
                     resolve(downloadURL)
                 });
             })
@@ -431,7 +441,7 @@ export class ApiService implements HttpInterceptor {
                         resolve({ caminhoImagem });
                     },
                     erroImg => {
-                        console.log(erroImg);
+                        // console.log(erroImg);
                         this.loadingBar.complete()
                         reject(erroImg);
                     }
@@ -442,6 +452,12 @@ export class ApiService implements HttpInterceptor {
 
     promoPost(obj: Promo): Observable<Promo> {
         return this.postData('promo', obj)
+    }
+
+    getAllPromos(): Observable<any> {
+
+        return this.http.get(`${this.baseurl}promos`)
+
     }
 
 

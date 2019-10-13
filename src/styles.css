@@ -200,4 +200,15 @@ img.foto-footer {
 
 mat-card#header-infos {
   margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+.telainiciaal-promos {
+  max-width: 250px;
+  margin-left: 5px;
+  margin-top: 5px;
+  margin-right: 5px;
+}
+.margin-100px {
+  margin-bottom: 100px;
 }

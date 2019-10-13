@@ -74,7 +74,7 @@
       </div>
     </mat-sidenav-content>
   </mat-sidenav-container>
-  <mat-toolbar class="example-footer" color="primary" fxShow.gt-sm="true" fxHide>
+  <mat-toolbar class="example-footer" color="primary" fxShow.gt-sm="true" fxHide *ngIf="emailVerified">
     <mat-card-header color="primary" *ngIf="emailVerified">
       <img mat-card-avatar *ngIf="photoURL" [src]="photoURL">
       <mat-card-title *ngIf=" displayName">{{displayName}}</mat-card-title>

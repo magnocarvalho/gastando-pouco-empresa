@@ -1,4 +1,4 @@
-<div class="login">
+<div class="login margin-100px">
     <div class="centraliza">
         <mat-card class="card-login">
             <mat-card-header>
@@ -12,7 +12,7 @@
                 <span *ngIf="!emailVerified">
                     <h5 *ngIf="email">Para continuar o cadastro verifique seu usuario no email e recarregue a pagina</h5>
                 </span>
-                <span *ngIf="emailVerified && !api.userComplete">
+                <span *ngIf="emailVerified">
                     <form [formGroup]="form">
                         <div fxLayout="column" fxLayoutAlign="start stretch">
                             <div class="larg-100">
@@ -107,18 +107,21 @@
                             <button mat-raised-button (click)="reEnviarEmail()" color="warn">Reenviar Email</button>
                         </span>
                     </div>
-                    <div class="larg-100" *ngIf="emailVerified" fxLayout="row" fxLayoutAlign="center center">
-                        <button mat-raised-button color="primary" (click)="salvarDados()">Salvar</button>
-                    </div>
+
                 </mat-card-actions>
             </span>
-            <span *ngIf="api.userComplete && emailVerified">
+            <mat-card-actions *ngIf="emailVerified">
+                <div class="larg-100" *ngIf="emailVerified" fxLayout="row" fxLayoutAlign="center center">
+                    <button mat-raised-button color="primary" (click)="salvarDados()">Salvar</button>
+                </div>
+            </mat-card-actions>
+            <!-- <span *ngIf="api.userComplete">
                 <mat-card-actions>
                     <div class="larg-100" fxLayout="row" fxLayoutAlign="center center">
                         <a mat-raised-button href="adm">Painel</a>
                     </div>
                 </mat-card-actions>
-            </span>
+            </span> -->
         </mat-card>
     </div>
 </div>
