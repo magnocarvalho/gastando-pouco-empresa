@@ -1,42 +1,96 @@
 <!--The content below is only a placeholder and can be replaced.-->
 <ngx-loading-bar></ngx-loading-bar>
-<mat-toolbar color="primary">
-  <span>Gastando Pouco</span>
-  <span class="example-spacer"></span>
-  <span *ngIf="!uid">
-    <button class="margin-r30" mat-raised-button (click)="linkRota('login')">
-      <mat-icon>account_circle</mat-icon> Login
-    </button>
-    <button mat-raised-button (click)="linkRota('register')">
-      <mat-icon>person_add</mat-icon> Register
-    </button>
-  </span>
-  <span *ngIf="uid && !emailVerified">
-    <button mat-raised-button (click)="onLoginOut()">
-      <mat-icon>close</mat-icon>Sair
-    </button>
-  </span>
-  <span *ngIf="emailVerified">
-
-    <button mat-raised-button [matMenuTriggerFor]="menu">
-      <mat-icon>account_circle</mat-icon> {{displayName}}
-    </button>
-    <mat-menu #menu="matMenu">
-      <button mat-menu-item>
-        <mat-icon>account_circle</mat-icon>Perfil
+<ng-container>
+  <mat-toolbar color="primary" class="example-header">
+    <mat-icon *ngIf="emailVerified" class="menu-botao" (click)="sidenav.toggle()">
+      menu
+    </mat-icon>
+    <span (click)="linkRota('index')">Gastando Pouco</span>
+    <span class="example-spacer"></span>
+    <span *ngIf="uid && !emailVerified">
+      <button mat-raised-button (click)="onLoginOut()">
+        <mat-icon>close</mat-icon>Sair
       </button>
-      <button mat-menu-item (click)="onLoginOut()">
-        <mat-icon>close</mat-icon> Logout
+    </span>
+    <span *ngIf="emailVerified">
+      <button mat-mini-fab [matMenuTriggerFor]="menu" color="primary">
+        <mat-icon>business</mat-icon>
       </button>
-    </mat-menu>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="linkRota('edit-profile')">
+          <mat-icon>account_circle</mat-icon>{{displayName}}
+        </button>
+        <button mat-menu-item (click)="onLoginOut()">
+          <mat-icon>close</mat-icon> Logout
+        </button>
+      </mat-menu>
+    </span>
+    <span *ngIf="!uid && !emailVerified">
+      <button mat-mini-fab [matMenuTriggerFor]="menuLogin" color="primary">
+        <mat-icon>business</mat-icon>
+      </button>
+      <mat-menu #menuLogin="matMenu">
+        <button mat-menu-item class="margin-r30" (click)="linkRota('login')">
+          <mat-icon>account_circle</mat-icon> Login
+        </button>
+        <button mat-menu-item (click)="linkRota('register')">
+          <mat-icon>person_add</mat-icon> Register
+        </button>
+      </mat-menu>
+    </span>
+  </mat-toolbar>
 
-  </span>
-</mat-toolbar>
-<div id="rotas" fxLayout="row" fxLayoutAlign="start stretch">
-  <div id="menu" *ngIf="emailVerified && userComplete | async" fxLayoutAlign="start stretch">
-    <app-menu></app-menu>
-  </div>
-  <div id="largura-total" fxLayout="column" fxLayoutAlign="start stretch" [ngClass]="{'login-total': userComplete | async}">
-    <router-outlet></router-outlet>
-  </div>
-</div>
+  <mat-sidenav-container class="example-container min-container" autosize>
+    <mat-sidenav #sidenav [mode]="mobileQuery.matches ? 'over' : 'side'" open class="example-sidenav">
+      <!-- <app-menu></app-menu> -->
+      <mat-card id="header-infos" *ngIf="emailVerified">
+        <mat-card-header color="primary">
+          <img mat-card-avatar *ngIf="photoURL" [src]="photoURL">
+          <mat-card-title *ngIf=" displayName">{{displayName}}</mat-card-title>
+          <mat-card-subtitle *ngIf=" email">{{email}}</mat-card-subtitle>
+        </mat-card-header>
+      </mat-card>
+      <mat-nav-list>
+
+        <mat-list-item [routerLink]="[ '/new-promo' ]">
+          <mat-icon>add_shopping_cart</mat-icon> Nova Promoção
+        </mat-list-item>
+        <mat-list-item [routerLink]="['/promo-list']">
+          <mat-icon>shopping_cart</mat-icon> Promoções
+        </mat-list-item>
+        <mat-list-item [routerLink]="['/edit-profile']">
+          <mat-icon>account_box</mat-icon> Perfil
+        </mat-list-item>
+        <mat-list-item [routerLink]="[ '/reports' ]">
+          <mat-icon>business</mat-icon> Relatorios
+        </mat-list-item>
+      </mat-nav-list>
+    </mat-sidenav>
+    <mat-sidenav-content>
+      <div class="min-container" fxLayout="row" flex="100" fxLayoutAlign="start stretch">
+        <div id="largura-total" fxLayout="column" fxLayoutAlign="start stretch">
+          <router-outlet></router-outlet>
+        </div>
+      </div>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+  <mat-toolbar class="example-footer" color="primary" fxShow.gt-sm="true" fxHide>
+    <mat-card-header color="primary" *ngIf="emailVerified">
+      <img mat-card-avatar *ngIf="photoURL" [src]="photoURL">
+      <mat-card-title *ngIf=" displayName">{{displayName}}</mat-card-title>
+
+    </mat-card-header>
+    <!-- <img class="foto-footer" *ngIf="emailVerified && photoURL" [src]="photoURL"><span>{{displayName}}</span> -->
+  </mat-toolbar>
+</ng-container>
+
+<!-- <div id="rotas" fxLayout="row" fxLayoutAlign="start stretch" fxShow.gt-xs="true" fxHide> -->
+<!-- <div>
+      <div id="menu" class="controle-menu" *ngIf="emailVerified && userComplete | async" fxLayoutAlign="start stretch">
+        <app-menu></app-menu>
+      </div>
+    </div>
+    <div id="largura-total" fxLayout="column" fxLayoutAlign="start stretch" [ngClass]="{'login-total': userComplete | async}">
+      <router-outlet></router-outlet>
+    </div>
+  </div> -->
