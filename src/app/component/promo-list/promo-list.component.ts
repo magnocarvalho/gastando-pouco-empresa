@@ -38,12 +38,15 @@ export class PromoListComponent implements OnInit {
     return moment(data).format('l')
   }
   editPromo(obj) {
+    alert('A ser feito')
     console.log(obj)
   }
   relatorio(obj) {
+    alert('A ser feito')
     console.log(obj)
   }
   deletar(obj) {
+    alert('A ser feito')
     console.log(obj)
   }
 

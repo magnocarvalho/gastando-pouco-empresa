@@ -177,22 +177,25 @@ export class EditProfileComponent implements OnInit {
             })
           })
         })
-      } else if (!this.arquivoImg && this.form.get('displayName').value == this.api.firebaseUser.displayName) {
+      } else if (uid && !this.arquivoImg) {
 
 
-        var obj: Usuario = this.form.value
-        obj.uid = uid;
-        obj.cep = this.form.get('cep').value
-        obj.cidade = this.form.get('cidade').value
-        obj.pais = this.form.get('pais').value
-        obj.estado = this.form.get('estado').value
-        obj.location = { coordinates: [this.latitude, this.longitude], type: 'Point' }
-        console.log(obj)
-        this.api.updateUserDados(obj).subscribe(res => {
-          console.log('Usuario atualizado', res)
-          this.rota.navigate(['adm'])
-        }, error => {
-          this.snackBar.open(error.message, 'error', { duration: 5000 })
+        this.api.doUpdateUser(this.form.get('displayName').value, this.form.get('photoURL').value).then(updateProfile => {
+
+          var obj: Usuario = this.form.value
+          obj.uid = uid;
+          obj.cep = this.form.get('cep').value
+          obj.cidade = this.form.get('cidade').value
+          obj.pais = this.form.get('pais').value
+          obj.estado = this.form.get('estado').value
+          obj.location = { coordinates: [this.latitude, this.longitude], type: 'Point' }
+          console.log(obj)
+          this.api.updateUserDados(obj).subscribe(res => {
+            console.log('Usuario atualizado', res)
+            this.rota.navigate(['adm'])
+          }, error => {
+            this.snackBar.open(error.message, 'error', { duration: 5000 })
+          })
         })
 
       } else {

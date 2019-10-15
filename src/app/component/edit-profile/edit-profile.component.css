@@ -1,0 +1,7 @@
+@media (max-width: 599px) {
+  .mat-controler-edit-profile {
+    margin: 0 auto;
+    max-width: 500px;
+    width: auto !important;
+  }
+}

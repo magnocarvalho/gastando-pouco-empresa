@@ -369,7 +369,7 @@ export class ApiService implements HttpInterceptor {
                                 console.log('empresa 202', empresa)
 
                                 if (empresa['error'] == 405) {
-                                    this.showSuccess("Login Realizado com sucesso, falta terminar o cadastro")
+                                    this.showSuccess("Login iniciado com sucesso, falta terminar o cadastro")
                                     this.rotas.navigate(['form-empresa']);
                                     resolve('form-empresa');
                                 } else {
@@ -558,7 +558,13 @@ export class ApiService implements HttpInterceptor {
     }
 
     promoPost(obj: Promo): Observable<Promo> {
-        return this.postData('promo', obj)
+        return new Observable(observer => {
+            this.postData('promo', obj).subscribe(res => {
+                this.promos.push(res)
+                this.showSuccess("Nova Promoção Salva com sucesso")
+                observer.next(res)
+            })
+        })
     }
 
     // getAllPromos(): Observable<any> {
@@ -572,6 +578,7 @@ export class ApiService implements HttpInterceptor {
                 localStorage.setItem('empresaDados', JSON.stringify(res));
                 // console.log('Dados dos usuario 73', this.empresaDados)
                 localStorage.setItem('user', JSON.stringify(this.firebaseUser));
+                this.showSuccess("Dados do usuario atualizados com sucesso")
                 observer.next(res)
             })
         })

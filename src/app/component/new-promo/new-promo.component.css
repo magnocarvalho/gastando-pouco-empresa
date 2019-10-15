@@ -1,21 +1,31 @@
 #form-card-left-top {
-  margin-top: 20px;
-  margin-right: 20px;
+  width: 100%;
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 10px;
 }
-.personal-image {
+@media (max-width: 599px) {
+  #form-card-left-top {
+    width: auto !important;
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 10px;
+  }
+}
+.personal-image-promo {
   text-align: center;
 }
-.personal-image input[type="file"] {
+.personal-image-promo input[type="file"] {
   display: none;
 }
-.personal-figure {
+.personal-figure-promo {
   position: relative;
   /* width: 120px;
   height: 120px; */
   width: 100%;
   margin: 0 auto;
 }
-.personal-avatar {
+.personal-avatar-promo {
   cursor: pointer;
   width: inherit;
   height: inherit;
@@ -24,10 +34,10 @@
   box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.3);
   transition: all ease-in-out 0.3s;
 }
-.personal-avatar:hover {
+.personal-avatar-promo:hover {
   box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.5);
 }
-.personal-figcaption {
+.personal-figcaption-promo {
   cursor: pointer;
   position: absolute;
   top: 0px;
@@ -38,11 +48,11 @@
   background-color: rgba(0, 0, 0, 0);
   transition: all ease-in-out 0.3s;
 }
-.personal-figcaption:hover {
+.personal-figcaption-promo:hover {
   opacity: 1;
   background-color: rgba(0, 0, 0, 0.9);
 }
-.personal-figcaption > img {
+.personal-figcaption-promo > img {
   height: 30%;
   padding: 30px;
   padding-top: 20%;
@@ -51,8 +61,8 @@
   align-self: center;
   margin: 0 auto;
 }
-.postagem-thumbnail,
-.postagem-exemplo img {
+.postagem-thumbnail-promo,
+.postagem-exemplo-promo img {
   margin: 0 auto;
   width: 100%;
 }
@@ -78,7 +88,7 @@
 .pading-5-left {
   padding-left: 10px;
 }
-.botao-caption {
+.botao-caption-promo {
   height: 100%;
 }
 input.example-right-align::-webkit-outer-spin-button,
@@ -87,4 +97,7 @@ input.example-right-align::-webkit-inner-spin-button {
 }
 input.example-right-align {
   -moz-appearance: textfield;
+}
+.altura-init {
+  /* padding: 20px; */
 }

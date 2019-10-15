@@ -147,6 +147,9 @@ span#pe-footer {
     max-width: 100% !important;
     margin: 0 auto !important;
   }
+  .card-login {
+    width: auto !important;
+  }
 }
 .example-container {
   position: absolute;
