@@ -26,4 +26,5 @@ export class Usuario implements User {
     rua: string;
     location: any;
     tipo: any;
+    cnpj: string;
 }

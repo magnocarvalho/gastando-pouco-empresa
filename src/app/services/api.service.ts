@@ -49,13 +49,23 @@ export class ApiService implements HttpInterceptor {
                     localStorage.setItem('user', JSON.stringify(this.firebaseUser));
 
 
-                    this.loadingBar.complete()
-                    this.getEmpresa()
+
+                    // this.getEmpresa()
+                    user.getIdToken(true).then(res => {
+                        this.token = res
+                        localStorage.setItem('token', res)
+                        this.getEmpresa()
+                        this.loadingBar.complete()
+                    }).catch(e => {
+                        this.loadingBar.complete()
+                    })
 
                 } else {
-                    localStorage.setItem('user', null);
+                    localStorage.removeItem('user');
                     // JSON.parse(localStorage.getItem('user'));
-                    // console.log("Nenhum usuario logado");
+                    this.token = null
+                    localStorage.removeItem('token')
+                    console.log("Nenhum usuario logado");
                 }
             } catch (error) {
                 this.afAuth.auth.signOut();
@@ -64,23 +74,43 @@ export class ApiService implements HttpInterceptor {
         // this.getData('user').toPromise()
 
     }
-    getEmpresa() {
-        return this.getData('user').subscribe(res => {
-            if (res != undefined && !res.error) {
-                this.empresaDados = Object.assign({}, res)
-                localStorage.setItem('empresaDados', JSON.stringify(res));
-                console.log('Dados dos usuario 73', this.empresaDados)
+    async getEmpresa() {
+        let ed: Usuario = await JSON.parse(localStorage.getItem('empresaDados'))
+        // console.log(ed)
+        // console.log(this.empresaDados)
+        if (ed && !this.empresaDados) {
+            this.empresaDados = ed;
+        }
+        if (ed) {
 
-                localStorage.setItem('user', JSON.stringify(this.firebaseUser));
-                this.userComplete.next(true)
-                this.getPromocoes(this.empresaDados._id)
-            } else {
-                console.log("78 Erro ao buscar o usuario", res)
-                this.userComplete.next(false)
-            }
-        }, err => {
-            this.userComplete.next(false)
-        })
+            await this.getData('user').subscribe(async res => {
+                if (res != undefined && !res.error) {
+                    this.empresaDados = Object.assign({}, res)
+                    await localStorage.setItem('empresaDados', JSON.stringify(res));
+                    // console.log('Dados dos usuario 73', this.empresaDados)
+                    await localStorage.setItem('user', JSON.stringify(this.firebaseUser));
+                    this.userComplete.next(true)
+                    await this.getPromocoes(this.empresaDados._id)
+                } else {
+                    // console.log("78 Erro ao buscar o usuario", res)
+                    this.userComplete.next(false)
+                }
+            })
+        } else {
+            await this.getData('user').subscribe(res => {
+                if (res != undefined && !res.error) {
+                    this.empresaDados = Object.assign({}, res)
+                    localStorage.setItem('empresaDados', JSON.stringify(res));
+                    // console.log('Dados dos usuario 73', this.empresaDados)
+                    localStorage.setItem('user', JSON.stringify(this.firebaseUser));
+                    this.userComplete.next(true)
+                    this.getPromocoes(this.empresaDados._id)
+                } else {
+                    // console.log("78 Erro ao buscar o usuario", res)
+                    this.userComplete.next(false)
+                }
+            })
+        }
     }
     getPromocoes(id = this.empresaDados._id || null) {
         return this.getData('promo', id).subscribe(res => {
@@ -136,7 +166,51 @@ export class ApiService implements HttpInterceptor {
                 });
         });
     }
+    putData(rota, obj): Observable<any> {
+        this.loadingBar.start()
+        if (rota != 'user')
+            obj['modifiedby'] = this.empresaDados._id
+        return new Observable(observer => {
+            this.getTokenHeader()
+                .then(tokenOptions => {
+                    return this.http.put(this.baseurl + rota, obj, { headers: tokenOptions })
+                        .subscribe(res => {
+                            observer.next(res);
+                            observer.complete();
+                            this.loadingBar.complete()
+                        })
+                })
+                .catch((error: any) => {
+                    observer.error(error);
+                    observer.complete();
+                    this.loadingBar.complete()
+                });
+        });
+    }
     async getTokenHeader() {
+        if (!this.token) {
+            let tk = await localStorage.getItem('token')
+            if (tk) {
+                await firebase.auth().currentUser.getIdToken()
+                    .then(token => {
+                        this.token = token;
+                        localStorage.setItem('token', token);
+                    }).catch(e => {
+                        console.error(e)
+                        this.showSuccess('Algo errado aconteceu, você precisa fazer login novamente')
+                        this.logout()
+                    })
+                let tokenHeader = {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${tk}`
+                };
+                return tokenHeader;
+            }
+            // } else {
+            //     this.showSuccess('Algo errado aconteceu, você precisa fazer login novamente')
+            //     // this.logout()
+            // }
+        }
         if (this.token) {
             let tokenHeader = {
                 'Content-Type': 'application/json',
@@ -144,16 +218,31 @@ export class ApiService implements HttpInterceptor {
             };
             return tokenHeader;
         }
-        return await firebase.auth().currentUser.getIdToken()
-            .then(token => {
-                // console.log(token);
-                this.token = token
-                let tokenHeader = {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                };
-                return tokenHeader;
-            });
+        // try {
+        //     await firebase.auth().currentUser.getIdToken()
+        //         .then(token => {
+        //             // console.log(token);
+        //             this.token = token
+        //             let tokenHeader = {
+        //                 'Content-Type': 'application/json',
+        //                 'Authorization': `Bearer ${token}`
+        //             };
+        //             return tokenHeader;
+        //         })
+        // } catch (e) {
+        //     setTimeout(() => {
+        //         firebase.auth().currentUser.getIdToken()
+        //             .then(token => {
+        //                 // console.log(token);
+        //                 this.token = token
+        //                 let tokenHeader = {
+        //                     'Content-Type': 'application/json',
+        //                     'Authorization': `Bearer ${token}`
+        //                 };
+        //                 return tokenHeader;
+        //             })
+        //     }, 2000)
+        // }
     }
 
     removeRequest(req: HttpRequest<any>) {
@@ -284,10 +373,14 @@ export class ApiService implements HttpInterceptor {
                                     this.rotas.navigate(['form-empresa']);
                                     resolve('form-empresa');
                                 } else {
+                                    this.empresaDados = empresa
+                                    localStorage.setItem('empresaDados', JSON.stringify(empresa));
+                                    console.log('Dados dos usuario 353', this.empresaDados.cidade)
+                                    // localStorage.setItem('user', JSON.stringify(this.firebaseUser));
                                     localStorage.setItem('user', JSON.stringify({ displayName: res.user.displayName, email: res.user.email, emailVerified: res.user.emailVerified }));
                                     this.loadingBar.increment(90)
                                     this.showSuccess("Login Realizado com sucesso")
-                                    this.empresaDados = empresa
+
                                     this.rotas.navigate(['adm']);
                                     resolve('adm');
                                 }
@@ -343,7 +436,8 @@ export class ApiService implements HttpInterceptor {
     }
 
     get getUserDados(): Usuario {
-        return this.empresaDados;
+        let tmp: Usuario = JSON.parse(localStorage.getItem('empresaDados'))
+        return tmp;
     }
 
     createUser(obj): Observable<any> {
@@ -351,21 +445,33 @@ export class ApiService implements HttpInterceptor {
         obj.uid = this.firebaseUser.uid
         obj.email = this.firebaseUser.email
         obj.photoURL = this.firebaseUser.photoURL
-        this.postData('user', obj).subscribe(res => {
-            if (res != undefined) {
-                this.empresaDados = Object.assign({}, res)
-                localStorage.setItem('empresaDados', JSON.stringify(res));
-                // console.log('Dados dos usuario 353', this.empresaDados.cidade)
-                localStorage.setItem('user', JSON.stringify(this.firebaseUser));
-                this.userComplete.next(true)
-                this.getPromocoes(this.empresaDados._id)
-            } else {
-                // console.log("Erro ao buscar o usuario", res)
-                this.userComplete.next(false)
-            }
+        return new Observable(observer => {
+            this.postData('user', obj).subscribe(res => {
+                if (res != undefined) {
+                    this.empresaDados = Object.assign({}, res)
+                    localStorage.setItem('empresaDados', JSON.stringify(res));
+                    // console.log('Dados dos usuario 353', this.empresaDados.cidade)
+                    localStorage.setItem('user', JSON.stringify(this.firebaseUser));
+                    this.userComplete.next(true)
+                    this.getPromocoes(this.empresaDados._id)
+                    observer.next(res)
+                    observer.complete();
+                } else {
+                    this.userComplete.next(false)
+                    // console.log("Erro ao buscar o usuario", res)
+                    observer.error("Erro ao buscar o usuario")
+                    observer.complete();
+
+                }
+            }, err => {
+                observer.error(err)
+                observer.complete();
+
+            })
         })
-        return
     }
+
+
     getUserLogin(token): Observable<any> {
         return this.getData('user');
     }
@@ -395,6 +501,7 @@ export class ApiService implements HttpInterceptor {
         this.empresaDados = null;
         this.firebaseUser = null;
         localStorage.setItem('user', null);
+        localStorage.setItem('empresaDados', null);
     }
     uploadFoto(base64, uid, titulo) {
         this.loadingBar.start()
@@ -454,9 +561,20 @@ export class ApiService implements HttpInterceptor {
         return this.postData('promo', obj)
     }
 
-    getAllPromos(): Observable<any> {
+    // getAllPromos(): Observable<any> {
+    //     return this.http.get(`${this.baseurl}promos`)
+    // }
 
-        return this.http.get(`${this.baseurl}promos`)
+    updateUserDados(obj: Usuario): Observable<any> {
+        return new Observable(observer => {
+            this.putData("user", obj).subscribe(res => {
+                this.empresaDados = Object.assign({}, res)
+                localStorage.setItem('empresaDados', JSON.stringify(res));
+                // console.log('Dados dos usuario 73', this.empresaDados)
+                localStorage.setItem('user', JSON.stringify(this.firebaseUser));
+                observer.next(res)
+            })
+        })
 
     }
 

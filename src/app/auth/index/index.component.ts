@@ -9,11 +9,11 @@ import { Promo } from 'src/app/model/promo';
 })
 export class IndexComponent implements OnInit {
 
-  public promos: Promo[] = []
+  // public promos: Promo[] = []
   constructor(public api: ApiService) {
-    api.getAllPromos().subscribe(res => {
-      this.promos = res
-    })
+    // api.getAllPromos().subscribe(res => {
+    //   this.promos = res
+    // })
   }
 
   ngOnInit() {

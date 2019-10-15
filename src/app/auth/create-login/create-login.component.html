@@ -26,6 +26,9 @@
                                 </figcaption>
                             </figure>
                         </label>
+                        <mat-label *ngIf="form.get('foto').hasError('required') && !arquivoImg">
+                            Adicionar Logo da Empresa
+                        </mat-label>
                     </div>
                     <mat-form-field class="formbase" appearance="outline">
                         <mat-label>Empresa</mat-label>

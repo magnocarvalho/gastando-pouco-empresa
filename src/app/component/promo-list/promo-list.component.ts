@@ -31,7 +31,7 @@ export class PromoListComponent implements OnInit {
     this.listPromo = api.promos
   }
   ngOnInit() {
-    this.api.getPromocoes()
+    // this.api.getPromocoes()
   }
 
   dataString(data): String {

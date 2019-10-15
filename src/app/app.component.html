@@ -5,7 +5,8 @@
     <mat-icon *ngIf="emailVerified" class="menu-botao" (click)="sidenav.toggle()">
       menu
     </mat-icon>
-    <span (click)="linkRota('index')">Gastando Pouco</span>
+    <span *ngIf="!emailVerified" (click)="linkRota('index')">Gastando Pouco</span>
+    <span *ngIf="emailVerified" (click)="linkRota('adm')">Gastando Pouco</span>
     <span class="example-spacer"></span>
     <span *ngIf="uid && !emailVerified">
       <button mat-raised-button (click)="onLoginOut()">
@@ -41,7 +42,7 @@
   </mat-toolbar>
 
   <mat-sidenav-container class="example-container min-container" autosize>
-    <mat-sidenav #sidenav [mode]="mobileQuery.matches ? 'over' : 'side'" open class="example-sidenav">
+    <mat-sidenav #sidenav [mode]="mobileQuery.matches ? 'over' : 'side'" [opened]="emailVerified" class="example-sidenav">
       <!-- <app-menu></app-menu> -->
       <mat-card id="header-infos" *ngIf="emailVerified">
         <mat-card-header color="primary">
@@ -50,18 +51,20 @@
           <mat-card-subtitle *ngIf=" email">{{email}}</mat-card-subtitle>
         </mat-card-header>
       </mat-card>
-      <mat-nav-list>
-
-        <mat-list-item [routerLink]="[ '/new-promo' ]">
+      <mat-nav-list *ngIf="uid && emailVerified">
+        <mat-list-item [routerLink]="[ '/adm' ]" routerLinkActive="active">
+          <mat-icon>money</mat-icon> Admin
+        </mat-list-item>
+        <mat-list-item [routerLink]="[ '/new-promo' ]" routerLinkActive="active">
           <mat-icon>add_shopping_cart</mat-icon> Nova Promoção
         </mat-list-item>
-        <mat-list-item [routerLink]="['/promo-list']">
+        <mat-list-item [routerLink]="['/promo-list']" routerLinkActive="active">
           <mat-icon>shopping_cart</mat-icon> Promoções
         </mat-list-item>
-        <mat-list-item [routerLink]="['/edit-profile']">
+        <mat-list-item [routerLink]="['/edit-profile']" routerLinkActive="active">
           <mat-icon>account_box</mat-icon> Perfil
         </mat-list-item>
-        <mat-list-item [routerLink]="[ '/reports' ]">
+        <mat-list-item [routerLink]="[ '/reports' ]" routerLinkActive="active">
           <mat-icon>business</mat-icon> Relatorios
         </mat-list-item>
       </mat-nav-list>
