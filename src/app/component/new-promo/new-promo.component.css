@@ -2,14 +2,23 @@
   width: 100%;
   max-width: 920px;
   margin: 0 auto;
-  padding: 10px;
+  padding: 15px;
+}
+@media (max-width: 960px) {
+  #form-card-left-top {
+    width: auto !important;
+    padding: 10px;
+  }
 }
 @media (max-width: 599px) {
   #form-card-left-top {
     width: auto !important;
-    max-width: 920px;
+    max-width: 600px;
     margin: 0 auto;
     padding: 10px;
+  }
+  .pading-5-left {
+    padding-left: 0 !important;
   }
 }
 .personal-image-promo {
@@ -99,5 +108,5 @@ input.example-right-align {
   -moz-appearance: textfield;
 }
 .altura-init {
-  /* padding: 20px; */
+  padding-top: 20px;
 }

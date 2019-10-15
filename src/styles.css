@@ -147,8 +147,11 @@ span#pe-footer {
     max-width: 100% !important;
     margin: 0 auto !important;
   }
-  .card-login {
+  .card-login.card-promo {
     width: auto !important;
+  }
+  .altura-init {
+    padding-top: 0 !important;
   }
 }
 .example-container {
