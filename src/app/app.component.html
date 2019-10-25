@@ -2,24 +2,37 @@
 <ngx-loading-bar></ngx-loading-bar>
 <ng-container>
   <mat-toolbar color="primary" class="example-header">
-    <mat-icon *ngIf="emailVerified" class="menu-botao" (click)="sidenav.toggle()">
+    <mat-icon
+      *ngIf="emailVerified && !!api.empresaDados"
+      class="menu-botao"
+      (click)="sidenav.toggle()"
+    >
       menu
     </mat-icon>
-    <span *ngIf="!emailVerified" (click)="linkRota('index')">Gastando Pouco</span>
-    <span *ngIf="emailVerified" (click)="linkRota('adm')">Gastando Pouco</span>
+    <span *ngIf="!emailVerified" (click)="linkRota('index')"
+      >Gastando Pouco</span
+    >
+    <span
+      *ngIf="emailVerified && !api.empresaDados && uid"
+      (click)="linkRota('form-empresa')"
+      >Terminar cadastro</span
+    >
+    <span *ngIf="emailVerified && !!api.empresaDados" (click)="linkRota('adm')"
+      >Gastando Pouco</span
+    >
     <span class="example-spacer"></span>
     <span *ngIf="uid && !emailVerified">
       <button mat-raised-button (click)="onLoginOut()">
         <mat-icon>close</mat-icon>Sair
       </button>
     </span>
-    <span *ngIf="emailVerified">
+    <span *ngIf="emailVerified && !!api.empresaDados">
       <button mat-mini-fab [matMenuTriggerFor]="menu" color="primary">
         <mat-icon>business</mat-icon>
       </button>
       <mat-menu #menu="matMenu">
         <button mat-menu-item (click)="linkRota('edit-profile')">
-          <mat-icon>account_circle</mat-icon>{{displayName}}
+          <mat-icon>account_circle</mat-icon>{{ displayName }}
         </button>
         <button mat-menu-item (click)="onLoginOut()">
           <mat-icon>close</mat-icon> Logout
@@ -42,46 +55,67 @@
   </mat-toolbar>
 
   <mat-sidenav-container class="example-container min-container" autosize>
-    <mat-sidenav #sidenav [mode]="mobileQuery.matches ? 'over' : 'side'" [opened]="emailVerified" class="example-sidenav">
+    <mat-sidenav
+      #sidenav
+      [mode]="mobileQuery.matches ? 'over' : 'side'"
+      [opened]="emailVerified && !!api.empresaDados"
+      class="example-sidenav"
+    >
       <!-- <app-menu></app-menu> -->
-      <mat-card id="header-infos" *ngIf="emailVerified">
+      <mat-card id="header-infos" *ngIf="emailVerified && !!api.empresaDados">
         <mat-card-header color="primary">
-          <img mat-card-avatar *ngIf="photoURL" [src]="photoURL">
-          <mat-card-title *ngIf=" displayName">{{displayName}}</mat-card-title>
-          <mat-card-subtitle *ngIf=" email">{{email}}</mat-card-subtitle>
+          <img mat-card-avatar *ngIf="photoURL" [src]="photoURL" />
+          <mat-card-title *ngIf="displayName">{{ displayName }}</mat-card-title>
+          <mat-card-subtitle *ngIf="email">{{ email }}</mat-card-subtitle>
         </mat-card-header>
       </mat-card>
-      <mat-nav-list *ngIf="uid && emailVerified">
-        <mat-list-item [routerLink]="[ '/adm' ]" routerLinkActive="active">
+      <mat-nav-list *ngIf="uid && emailVerified && !!api.empresaDados">
+        <mat-list-item [routerLink]="['/adm']" routerLinkActive="active">
           <mat-icon>money</mat-icon> Admin
         </mat-list-item>
-        <mat-list-item [routerLink]="[ '/new-promo' ]" routerLinkActive="active">
+        <mat-list-item [routerLink]="['/new-promo']" routerLinkActive="active">
           <mat-icon>add_shopping_cart</mat-icon> Nova Promoção
         </mat-list-item>
         <mat-list-item [routerLink]="['/promo-list']" routerLinkActive="active">
           <mat-icon>shopping_cart</mat-icon> Promoções
         </mat-list-item>
-        <mat-list-item [routerLink]="['/edit-profile']" routerLinkActive="active">
+        <mat-list-item
+          [routerLink]="['/edit-profile']"
+          routerLinkActive="active"
+        >
           <mat-icon>account_box</mat-icon> Perfil
         </mat-list-item>
-        <mat-list-item [routerLink]="[ '/reports' ]" routerLinkActive="active">
+        <mat-list-item [routerLink]="['/reports']" routerLinkActive="active">
           <mat-icon>business</mat-icon> Relatorios
         </mat-list-item>
       </mat-nav-list>
     </mat-sidenav>
     <mat-sidenav-content>
-      <div class="min-container" fxLayout="row" flex="100" fxLayoutAlign="start stretch">
+      <div
+        class="min-container"
+        fxLayout="row"
+        flex="100"
+        fxLayoutAlign="start stretch"
+      >
         <div id="largura-total" fxLayout="column" fxLayoutAlign="start stretch">
           <router-outlet></router-outlet>
         </div>
       </div>
     </mat-sidenav-content>
   </mat-sidenav-container>
-  <mat-toolbar class="example-footer" color="primary" fxShow.gt-sm="true" fxHide *ngIf="emailVerified">
-    <mat-card-header color="primary" *ngIf="emailVerified">
-      <img mat-card-avatar *ngIf="photoURL" [src]="photoURL">
-      <mat-card-title *ngIf=" displayName">{{displayName}}</mat-card-title>
-
+  <mat-toolbar
+    class="example-footer"
+    color="primary"
+    fxShow.gt-sm="true"
+    fxHide
+    *ngIf="emailVerified"
+  >
+    <mat-card-header
+      color="primary"
+      *ngIf="emailVerified && !!api.empresaDados"
+    >
+      <img mat-card-avatar *ngIf="photoURL" [src]="photoURL" />
+      <mat-card-title *ngIf="displayName">{{ displayName }}</mat-card-title>
     </mat-card-header>
     <!-- <img class="foto-footer" *ngIf="emailVerified && photoURL" [src]="photoURL"><span>{{displayName}}</span> -->
   </mat-toolbar>

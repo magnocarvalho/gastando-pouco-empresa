@@ -134,6 +134,12 @@ span#pe-footer {
   mat-card.card-login.mat-card {
     margin-top: 0;
   }
+  .card-login.mat-card {
+    width: 100% !important;
+    max-width: 600px !important;
+    margin-bottom: 0;
+    margin: 0 auto;
+  }
   div#largura-total.login-total {
     width: 100% !important;
   }

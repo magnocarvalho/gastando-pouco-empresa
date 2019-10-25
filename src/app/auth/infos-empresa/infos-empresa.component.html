@@ -84,7 +84,7 @@
                                 <mat-label>Tipo de estabelecimento</mat-label>
                                 <mat-select placeholder="Seleciona o tipo de estabelecimento" formControlName="tipo" name="item">
                                     <mat-option required *ngFor="let item of tiposCarregados" [value]="item._id">
-                                        {{item.value}}
+                                       <mat-icon>{{item.icon}}</mat-icon> {{item.value}}
                                     </mat-option>
                                 </mat-select>
                             </mat-form-field>
